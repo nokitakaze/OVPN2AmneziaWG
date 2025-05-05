@@ -13,13 +13,6 @@ RUN mkdir /root/awg
 
 WORKDIR /root/awg
 
-#RUN DEBIAN_FRONTEND=noninteractive apt install --yes curl wget python3 python3-pip python3-qrcode iptables iproute2 net-tools && \
-#    echo "net.ipv4.ip_forward = 1" > /etc/sysctl.d/00-amnezia.conf && \
-#    wget 'https://gist.githubusercontent.com/remittor/8c3d9ff293b2ba4b13c367cc1a69f9eb/raw/awgcfg.py' -O ~/awg/awgcfg.py
-
-# for debug purposes only
-RUN DEBIAN_FRONTEND=noninteractive apt install --yes nano screen sudo mc inetutils-ping traceroute htop
-
 # awg-quick without resolvconv
 COPY awg-quick /usr/bin/
 
@@ -27,3 +20,6 @@ COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /usr/bin/awg-quick /entrypoint.sh
 
 CMD ["/entrypoint.sh"]
+
+# for debug purposes only
+# RUN DEBIAN_FRONTEND=noninteractive apt install --yes nano screen sudo mc inetutils-ping traceroute htop
