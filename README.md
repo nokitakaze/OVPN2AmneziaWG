@@ -12,20 +12,11 @@ The image uses the latest Ubuntu LTS at the moment — 24.04.
 
 1. Download the [Amnezia VPN client](https://amnezia.org/downloads), which will install all the necessary packages on the prepared
    server. This will be needed later.
-2. Generate file configuration (described below)
+2. Generate AmneziaWG file configuration (described below)
 3. Create the future container with git
-4. Start your container (described below)
-5. Generate OVPN-files (described below)
-
-### Starting up your container
-
-```sh
-sudo sysctl -w net.ipv4.ip_forward=1
-docker-compose up -d
-```
-
-Your container will automatically generate new keys for the OpenVPN server. If you delete the files from the
-openvpn-server-no-tls.conf/openvpn-server-with-tls.conf folders, it will create new ones when the container restarts.
+4. Fix `docker-compose.yml` (described below)
+5. Start your container (described below)
+6. Generate OVPN-files (described below)
 
 ### Clean docker image build
 
@@ -36,6 +27,27 @@ git clone https://github.com/nokitakaze/OVPN2AmneziaWG
 cd OVPN2AmneziaWG
 docker-compose build
 ```
+
+### Fix docker-compose.yml
+
+You need to replace 192.168.1.2 in both instances in the docker-compose.yml file with the IP address through which your clients
+will connect to this server.
+
+Since I am running the container in a VirtualBox machine with the network adapter set to "Bridged Adapter" mode, the main IP
+address of my virtual machine is in the 192.168.1.0/24 network, along with all my devices, including the router, computers,
+phones, Oculus Rift headset, and others.
+
+In my case, the IP address in Docker indeed belongs to the 192.168.1.0/24 network.
+
+### Starting up your container
+
+```sh
+sudo sysctl -w net.ipv4.ip_forward=1
+docker-compose up -d
+```
+
+Your container will automatically generate new keys for the OpenVPN server. If you delete the files from the
+openvpn-server-no-tls.conf/openvpn-server-with-tls.conf folders, it will create new ones when the container restarts.
 
 ### Generate AmneziaWG file configuration
 
