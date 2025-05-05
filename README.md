@@ -96,8 +96,8 @@ Copy it into the `amneziawg-client.conf` file.
 After your container started, execute this
 
 ```sh
-docker exec openvpn_server_no_tls ./genclient.sh o > tls-yes.ovpn
-docker exec openvpn_server_with_tls ./genclient.sh o > tls-no.ovpn
+docker exec openvpn_server_no_tls ./genclient.sh o > tls-no.ovpn
+docker exec openvpn_server_with_tls ./genclient.sh o > tls-yes.ovpn
 ```
 
 And use it on your standard OpenVPN client.
