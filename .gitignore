@@ -5,3 +5,6 @@
 /openvpn-server-with-tls.conf
 !/openvpn-server-no-tls.conf/placeholder-file
 !/openvpn-server-with-tls.conf/placeholder-file
+
+/tls-no.ovpn
+/tls-yes.ovpn
