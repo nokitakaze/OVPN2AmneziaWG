@@ -1,0 +1,54 @@
+version: '3'
+services:
+  amneziawg_client:
+    container_name: amneziawg_client
+    build: amneziawg-client
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./amneziawg-client.conf:/etc/amnezia/amneziawg/wg0.conf
+    healthcheck:
+      test: ["CMD", "test", "-f", "/tmp/newip.dat"]
+      interval: 10s
+      timeout: 1s
+      retries: 10
+  openvpn_server_with_tls:
+    container_name: openvpn_server_with_tls
+    build: openvpn-server-with-tls
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "1194:1194/udp"
+      - "8080:8080/tcp"
+    environment:
+      HOST_CONF_PORT: "8080"
+      HOST_TUN_PORT: "1194"
+      HOST_ADDR: "192.168.1.53"
+    depends_on:
+      amneziawg_client:
+        condition: service_healthy
+    volumes:
+      - ./openvpn-server-with-tls.conf:/opt/Dockovpn_data
+    stdin_open: true                  # eq -i
+    tty: true                         # rq -t
+    restart: "no"
+  openvpn_server_no_tls:
+    container_name: openvpn_server_no_tls
+    build: openvpn-server-no-tls
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "1195:1195/udp"
+      - "8081:8081/tcp"
+    environment:
+      HOST_CONF_PORT: "8081"
+      HOST_TUN_PORT: "1195"
+      HOST_ADDR: "192.168.1.53"
+    volumes:
+      - ./openvpn-server-no-tls.conf:/opt/Dockovpn_data
+    depends_on:
+      amneziawg_client:
+        condition: service_healthy
+    stdin_open: true                  # eq -i
+    tty: true                         # eq -t
+    restart: "no"

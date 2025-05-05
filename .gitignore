@@ -1,0 +1,7 @@
+/.idea
+
+# placeholders
+/openvpn-server-no-tls.conf/*
+!/openvpn-server-no-tls.conf/placeholder-file
+/openvpn-server-with-tls/*
+!/openvpn-server-with-tls/placeholder-file
