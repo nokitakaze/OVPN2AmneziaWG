@@ -5,4 +5,4 @@ COPY server.conf /etc/openvpn/server.conf
 RUN chmod +x /opt/Dockovpn/start.sh
 
 # for debug purposes only
-# RUN apk add nano screen sudo mc htop curl
+# RUN apk update && apk add nano screen sudo mc htop curl
