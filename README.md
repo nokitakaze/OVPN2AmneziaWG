@@ -4,6 +4,9 @@ This is a Docker image for two OpenVPN servers (with and without TLS) that redir
 AmneziaWG. It enables you to establish an OpenVPN connection even in locations where, for some reason, the OpenVPN protocol does
 not work, but your devices are not configured for other protocols.
 
+**Amnezia VPN (along with the kernel module) must be installed on the Docker host machine**. Moreover, to use `install.sh`, you
+must have Ubuntu. Fortunately, **the Docker host can be a virtual machine**, such as VirtualBox.
+
 I also suggest reviewing [my repository](https://github.com/nokitakaze/AmneziaVPNDockerServer), where the Amnezia VPN Server is
 deployed using Docker.
 
@@ -14,41 +17,11 @@ The image uses the latest Ubuntu LTS at the moment — 24.04.
 1. Download the [Amnezia VPN client](https://amnezia.org/downloads), which will install all the necessary packages on the prepared
    server. This will be needed later.
 2. Generate AmneziaWG file configuration (described below)
-3. Create the future container with git
-4. Fix `docker-compose.yml` (described below)
-5. Start your container (described below)
-6. Generate OVPN-files (described below)
-
-### Clean docker image build
-
-Clone this git
-
-```sh
-git clone https://github.com/nokitakaze/OVPN2AmneziaWG
-cd OVPN2AmneziaWG
-docker-compose build
-```
-
-### Fix docker-compose.yml
-
-You need to replace 192.168.1.2 in both instances in the docker-compose.yml file with the IP address through which your clients
-will connect to this server.
-
-Since I am running the container in a VirtualBox machine with the network adapter set to "Bridged Adapter" mode, the main IP
-address of my virtual machine is in the 192.168.1.0/24 network, along with all my devices, including the router, computers,
-phones, Oculus Rift headset, and others.
-
-In my case, the IP address in Docker indeed belongs to the 192.168.1.0/24 network.
-
-### Starting up your container
-
-```sh
-sudo sysctl -w net.ipv4.ip_forward=1
-docker-compose up -d
-```
-
-Your container will automatically generate new keys for the OpenVPN server. If you delete the files from the
-openvpn-server-no-tls.conf/openvpn-server-with-tls.conf folders, it will create new ones when the container restarts.
+3. Create the future container with git (described below)
+4. Run `install.sh` on your host machine
+5. Fix `docker-compose.yml` (described below)
+6. Start your container (described below)
+7. Generate OVPN-files (described below)
 
 ### Generate AmneziaWG file configuration
 
@@ -91,6 +64,41 @@ PersistentKeepalive fields are unlikely to change.
 
 Copy it into the `amneziawg-client.conf` file.
 
+### Clean docker image build
+
+Clone this git
+
+```sh
+git clone https://github.com/nokitakaze/OVPN2AmneziaWG
+cd OVPN2AmneziaWG
+docker-compose build
+```
+
+### Fix docker-compose.yml
+
+You need to replace 192.168.1.2 in both instances in the docker-compose.yml file with the IP address through which your clients
+will connect to this server.
+
+Since I am running the container in a VirtualBox machine with the network adapter set to "Bridged Adapter" mode, the main IP
+address of my virtual machine is in the 192.168.1.0/24 network, along with all my devices, including the router, computers,
+phones, Oculus Rift headset, and others.
+
+In my case, the IP address in Docker indeed belongs to the 192.168.1.0/24 network.
+
+### Starting up your container
+
+Run `start.sh` or run this:
+
+```sh
+sudo modprobe amneziawg
+sudo sysctl -q net.ipv4.ip_forward=1
+sudo sysctl -q net.ipv4.conf.all.src_valid_mark=1
+docker-compose up -d
+```
+
+Your container will automatically generate new keys for the OpenVPN server. If you delete the files from the
+openvpn-server-no-tls.conf/openvpn-server-with-tls.conf folders, it will create new ones when the container restarts.
+
 ### Generate OVPN-files
 
 After your container started, execute this
@@ -106,16 +114,15 @@ And use it on your standard OpenVPN client.
 
 Licensed under the Apache License.
 
-Please note that this container requires privileged access to Docker on your host machine via `/var/run/docker.sock`.
-
 The author of this repository is not affiliated with or endorsed by the developers of Amnezia VPN. The software provided here
 includes Amnezia VPN, which operates independently of this Docker image. The author has no control over the source code or
 behavior of Amnezia VPN and is not responsible for any actions or outcomes resulting from its use.
 
 The OpenVPN server image is based on the image alekslitvinenk/openvpn ( https://github.com/dockovpn/dockovpn ) created by
-Alexander Litvinenko aka alekslitvinenk. The author of this repository is not affiliated with or endorsed by Alexander Litvinenko.
+Alexander Litvinenko aka [alekslitvinenk](https://github.com/alekslitvinenk).
+The author of this repository is not affiliated with or endorsed by Alexander Litvinenko.
 
-**Disclaimer of Liability**: This Docker image is provided "AS IS" without any warranties, express or implied, and is intended for
+**Disclaimer of Liability**: This repository is provided "AS IS" without any warranties, express or implied, and is intended for
 use at the user's own risk. Users are strongly encouraged to perform their own security and functionality review of Amnezia VPN
 before deployment. By using this software, you agree that the author of this repository shall not be held liable for any damages,
 loss of data, or other harm arising from the use of Amnezia VPN or any other components contained within this image.

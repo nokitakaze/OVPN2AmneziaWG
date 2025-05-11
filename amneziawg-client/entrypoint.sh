@@ -11,7 +11,10 @@ function shutdown() {
 trap shutdown SIGTERM SIGINT
 
 # Check whether the Amnezia kernel module is loaded
-lsmod | grep -i amnezia
+if ! lsmod | grep -E '^amneziawg' >/dev/null 2>&1; then
+    echo "Error: module amneziawg is not loaded" >&2
+    exit 3
+fi
 
 # Generate a WireGuard configuration
 # python ~/awg/awgcfg.py --make /etc/amnezia/amneziawg/awg0.conf -i 10.14.88.1/24 -p 49666
@@ -32,7 +35,7 @@ if [ "$old_ip" == "$new_ip" ]; then
 fi
 
 # Enable IP forwarding
-iptables -t nat -A POSTROUTING -s 172.21.0.0/16 -o wg0 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 172.16.0.0/12 -o wg0 -j MASQUERADE
 iptables -A FORWARD -i eth0 -o wg0 -j ACCEPT
 iptables -A FORWARD -i wg0 -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT
 
@@ -44,7 +47,7 @@ echo "New IP: $new_ip" > /tmp/newip.dat
 
 # Main infinite loop
 while true; do
-    sleep 1
+    sleep 3
 done
 
 # Bring down the WireGuard interface (this line will never be reached)
