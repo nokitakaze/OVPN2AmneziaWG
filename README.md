@@ -110,6 +110,32 @@ docker exec openvpn_server_with_tls ./genclient.sh o > tls-yes.ovpn
 
 And use it on your standard OpenVPN client.
 
+## OpenVPN clients with only passwords
+Some OpenVPN clients support only password-based login without certificates. For example, Mikrotik routers. To allow such clients to connect to your server:
+
+1. Uncomment the `openvpn_server_no_tls_pass` block in `docker-compose.yml`
+2. Add usernames and passwords to the `psw-file` in the format `YOUR_LOGIN:YOUR_PASSWORD`
+
+Settings for Mikrotik
+PPP -> "Interface" tab -> Add New -> OVPN Client
+
+```
+Connect To: 192.168.1.2 (Your server's IP, same as in docker-compose.yml)
+Port: 1196 (Change if you modified it in docker-compose.yml)
+Mode: IP
+Protocol: tcp
+User: mikrotik (Replace with the value from your psw-file)
+Password: mikrotik
+Certificate: none
+Verify Server Certificate: [unchecked]
+TLS Version: any
+Auth: null
+Cipher: aes 256 gcm
+Use Peer DNS: yes
+Add Default Route: [unchecked]
+Don't Add Pushed Routes (route-nopull): [checked]
+```
+
 ## License
 
 Licensed under the Apache License.

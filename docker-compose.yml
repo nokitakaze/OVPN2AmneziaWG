@@ -52,3 +52,24 @@ services:
     stdin_open: true                  # eq -i
     tty: true                         # eq -t
     restart: "no"
+#  openvpn_server_no_tls_pass:
+#    container_name: openvpn_server_no_tls_pass
+#    build: openvpn-server-no-tls-pass
+#    cap_add:
+#      - NET_ADMIN
+#    ports:
+#      - "1196:1196/tcp"
+#      - "8082:8082/tcp"
+#    environment:
+#      HOST_CONF_PORT: "8082"
+#      HOST_TUN_PORT: "1196"
+#      HOST_ADDR: "192.168.1.2"
+#    volumes:
+#      - ./openvpn-server-no-tls-pass.conf:/opt/Dockovpn_data
+#      - ./psw-file:/etc/openvpn/psw-file:ro
+#    depends_on:
+#      amneziawg_client:
+#        condition: service_healthy
+#    stdin_open: true                  # eq -i
+#    tty: true                         # eq -t
+#    restart: "no"
