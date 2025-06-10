@@ -7,23 +7,23 @@ echo "Old external IP: $old_ip"
 # Get IP of AmneziaWG Client host
 GW_IP=$(getent hosts amneziawg_client | awk '{ print $1 }')
 
-echo AmneziaWG Client Host: $GW_IP
+echo "AmneziaWG Client Host: $GW_IP"
 
 # Get our internal docker ip on eth0 (CIDR)
 SUBNET=$(ip -o -f inet addr show eth0 | awk '{print $4}')
 SUBNET_MASK=$(echo "$SUBNET" | sed -E 's/^([0-9]+\.[0-9]+\.[0-9]+)\.[0-9]+\/([0-9]+)/\1.0\/\2/')
 
-echo on eth0 IP/subnet is $SUBNET with mask $SUBNET_MASK
+echo "on eth0 IP/subnet is $SUBNET with mask $SUBNET_MASK"
 
 # Get our internal docker gateway
 GATEWAY=$(echo "$SUBNET" | sed -E 's/^([0-9]+\.[0-9]+\.[0-9]+)\.[0-9]+\/[0-9]+/\1.1/')
 
-echo ip route add \"$SUBNET_MASK\" via \"$GATEWAY\"
+echo "ip route add \"$SUBNET_MASK\" via \"$GATEWAY\""
 
 # Add internal docker net
 ip route add "$SUBNET_MASK" via "$GATEWAY"
 
-echo ip route add 192.168.0.0/16 via \"$GATEWAY\" dev eth0
+echo "ip route add 192.168.0.0/16 via \"$GATEWAY\" dev eth0"
 ip route add 192.168.0.0/16 via "$GATEWAY" dev eth0
 
 # Delete current default route
@@ -35,8 +35,16 @@ ip route add default via "$GW_IP" metric 1
 # Show routing
 route -n
 
-new_ip=$(curl -s 'https://api.ipify.org')
-echo "New external IP: $new_ip"
+while true; do
+    new_ip=$(curl -s 'https://api.ipify.org')
+    if [[ -z "$new_ip" ]]; then
+        echo "Error: unable to retrieve external IP"
+        sleep 5
+    else
+        echo "New external IP: $new_ip"
+        break
+    fi
+done
 
 # Start service
 echo "Start OpenVPN Server itself"
