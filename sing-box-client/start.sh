@@ -2,9 +2,12 @@
 
 set -Eeuo pipefail
 
+shutdown_initiated=0
+
 # Termination signal handler
 function shutdown() {
-    echo "Termination signal received, exiting..."
+    echo "Termination signal received, shutting down sing-box and exiting…"
+    shutdown_initiated=1
     killall sing-box
     exit 0
 }
@@ -99,5 +102,17 @@ echo "New IP: $new_ip" > /tmp/newip.dat
 
 # Main infinite loop
 while true; do
+    if (( shutdown_initiated )); then
+        # The script received a termination signal — entering a deep sleep
+        sleep 3600
+        continue
+    fi
+
+    # Check if sing-box is alive
+    if ! kill -0 "$pid" 2>/dev/null; then
+        echo "Process sing-box (PID $pid) exited"
+        exit 2
+    fi
+
     sleep 3
 done
