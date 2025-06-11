@@ -20,8 +20,6 @@ services:
 #      - NET_ADMIN
 #    volumes:
 #      - ./xray-client.json:/app/input.json:ro
-#    environment:
-#      ENABLE_DEPRECATED_TUN_ADDRESS_X: "true"
 ##    ports:
 ##      - "127.0.0.1:1080:1080"
 ##      - "127.0.0.1:8080:8080"
