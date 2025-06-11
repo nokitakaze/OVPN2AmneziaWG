@@ -1,8 +1,8 @@
 # OpenVPN to AmneziaWG Docker Server
 
-This is a Docker image for two OpenVPN servers (with and without TLS) that redirect their traffic to an integrated client for
-AmneziaWG. It enables you to establish an OpenVPN connection even in locations where, for some reason, the OpenVPN protocol does
-not work, but your devices are not configured for other protocols.
+This is a Docker image for three OpenVPN servers (with TLS, without TLS, and without TLS with password-only authentication) that
+redirect their traffic to a built-in client for AmneziaWG or XRay. This allows you to establish an OpenVPN connection even in
+locations where the OpenVPN protocol does not work for some reason, but your devices are not configured to use other protocols.
 
 **Amnezia VPN (along with the kernel module) must be installed on the Docker host machine**. Moreover, to use `install.sh`, you
 must have Ubuntu. Fortunately, **the Docker host can be a virtual machine**, such as VirtualBox.
@@ -16,10 +16,10 @@ The image uses the latest Ubuntu LTS at the moment — 24.04.
 
 1. Download the [Amnezia VPN client](https://amnezia.org/downloads), which will install all the necessary packages on the prepared
    server. This will be needed later.
-2. Generate AmneziaWG file configuration (described below)
+2. Generate AmneziaWG or XRay file configuration (described below)
 3. Create the future container with git (described below)
 4. Run `install.sh` on your host machine
-5. Fix `docker-compose.yml` (described below)
+5. Edit `docker-compose.yml` (described below)
 6. Start your container (described below)
 7. Generate OVPN-files (described below)
 
@@ -64,6 +64,41 @@ PersistentKeepalive fields are unlikely to change.
 
 Copy it into the `amneziawg-client.conf` file.
 
+### Generate XRay file configuration
+
+Described for the Android version of the application.
+
+1. In your Amnezia application ( https://amnezia.org/downloads ), click the "Share" button (three
+   hollow dots connected by two lines forming a triangle). Naturally, you must already have root access to the server with
+   AmneziaWG.
+2. Select the "Connection" tab (selected by default).
+3. Enter the desired username, choose your server, set Protocol = XRay. Connection format: "**XRay native format**".
+4. Click "Share" and wait 5–10 seconds.
+5. On the page "Connection to XXXX", click "Share connection settings" and you will receive a text similar to the one below.
+
+```json
+{
+  "inbounds": [
+    {
+      "listen": "127.0.0.1",
+      "port": 10808,
+      "protocol": "socks",
+      "settings": {
+        "udp": true
+      }
+    }
+  ],
+  "log": {
+    "loglevel": "error"
+  },
+  .
+  .
+  .
+}
+```
+
+Copy it into the `xray-client.conf` file.
+
 ### Clean docker image build
 
 Clone this git
@@ -74,16 +109,27 @@ cd OVPN2AmneziaWG
 docker-compose build
 ```
 
-### Fix docker-compose.yml
+### Edit docker-compose.yml
 
-You need to replace 192.168.1.2 in both instances in the docker-compose.yml file with the IP address through which your clients
-will connect to this server.
+You need to replace 192.168.1.2 in all client instances in the docker-compose.yml file with the IP address through which your
+clients will connect to this server.
 
 Since I am running the container in a VirtualBox machine with the network adapter set to "Bridged Adapter" mode, the main IP
 address of my virtual machine is in the 192.168.1.0/24 network, along with all my devices, including the router, computers,
-phones, Oculus Rift headset, and others.
+smartphones, Nintendo Switch, Oculus Quest headset, and others.
 
 In my case, the IP address in Docker indeed belongs to the 192.168.1.0/24 network.
+
+#### XRay client
+
+If you intend to use XRay as the intermediate layer instead of AmneziaWG, additional actions are required. Comment out the first
+`amneziawg_client` block, which builds from the `amneziawg-client` directory, and remove the comment from the second
+`amneziawg_client` block, which builds from the `sing-box-client` directory.
+
+Ignore the fact that you are inserting an XRay configuration while the application is Sing-Box and their formats differ. The code
+inside the container will automatically generate a new configuration for Sing-Box using your file as a template.
+
+When switching the intermediate layer between AmneziaWG and XRay, remember to execute `docker-compose build` again.
 
 ### Starting up your container
 
@@ -117,7 +163,7 @@ Some OpenVPN clients support only password-based login without certificates. For
 2. Add usernames and passwords to the `psw-file` in the format `YOUR_LOGIN:YOUR_PASSWORD`
 
 Settings for Mikrotik
-PPP -> "Interface" tab -> Add New -> OVPN Client
+PPP → "Interface" tab → Add New → OVPN Client
 
 ```
 Connect To: 192.168.1.2 (Your server's IP, same as in docker-compose.yml)

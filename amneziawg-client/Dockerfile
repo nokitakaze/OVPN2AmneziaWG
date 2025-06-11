@@ -19,7 +19,7 @@ COPY awg-quick /usr/bin/
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /usr/bin/awg-quick /entrypoint.sh
 
-CMD ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 
 # for debug purposes only
-# RUN DEBIAN_FRONTEND=noninteractive apt install --yes nano screen sudo mc inetutils-ping traceroute htop
+# RUN DEBIAN_FRONTEND=noninteractive apt install --yes nano screen sudo mc inetutils-ping traceroute htop net-tools

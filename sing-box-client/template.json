@@ -1,0 +1,32 @@
+{
+  "log": {
+    "level": "warning"
+  },
+  "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "interface_name": "tun0",
+      "inet4_address": "10.0.0.2/24",
+      "mtu": 1500,
+      "auto_route": false
+    }
+  ],
+  "outbounds": [],
+  "route": {
+    "rules": [
+      {
+        "inbound": [
+          "tun-in"
+        ],
+        "outbound": "proxy"
+      },
+      {
+        "geoip": [
+          "private"
+        ],
+        "outbound": "direct"
+      }
+    ]
+  }
+}

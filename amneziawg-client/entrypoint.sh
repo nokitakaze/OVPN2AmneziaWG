@@ -16,9 +16,6 @@ if ! lsmod | grep -E '^amneziawg' >/dev/null 2>&1; then
     exit 3
 fi
 
-# Generate a WireGuard configuration
-# python ~/awg/awgcfg.py --make /etc/amnezia/amneziawg/awg0.conf -i 10.14.88.1/24 -p 49666
-
 old_ip=$(curl -s 'https://api.ipify.org')
 echo "Current IP: $old_ip"
 

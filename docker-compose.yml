@@ -12,6 +12,26 @@ services:
       interval: 10s
       timeout: 1s
       retries: 10
+#  amneziawg_client:
+#    container_name: amneziawg_client
+#    build: sing-box-client
+#    restart: unless-stopped
+#    cap_add:
+#      - NET_ADMIN
+#    volumes:
+#      - ./xray-client.json:/app/input.json:ro
+#    environment:
+#      ENABLE_DEPRECATED_TUN_ADDRESS_X: "true"
+##    ports:
+##      - "127.0.0.1:1080:1080"
+##      - "127.0.0.1:8080:8080"
+#    devices:
+#      - /dev/net/tun
+#    healthcheck:
+#      test: ["CMD", "test", "-f", "/tmp/newip.dat"]
+#      interval: 10s
+#      timeout: 1s
+#      retries: 10
   openvpn_server_with_tls:
     container_name: openvpn_server_with_tls
     build: openvpn-server-with-tls

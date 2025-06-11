@@ -1,0 +1,46 @@
+{
+  "inbounds": [
+    {
+      "listen": "127.0.0.1",
+      "port": 10808,
+      "protocol": "socks",
+      "settings": {
+        "udp": true
+      }
+    }
+  ],
+  "log": {
+    "loglevel": "error"
+  },
+  "outbounds": [
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "example.com",
+            "port": 1488,
+            "users": [
+              {
+                "encryption": "none",
+                "flow": "0000-0000-000000",
+                "id": "00000000-0000-0000-0000-000000000000"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "realitySettings": {
+          "fingerprint": "chrome",
+          "publicKey": "x2-0000000000000000000000000000000000000000",
+          "serverName": "www.example.com",
+          "shortId": "0000000000000000",
+          "spiderX": ""
+        },
+        "security": "reality"
+      }
+    }
+  ]
+}
