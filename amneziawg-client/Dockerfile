@@ -7,7 +7,8 @@ RUN sed -i 's/^\(Types: *\)deb$/\1deb deb-src/' /etc/apt/sources.list.d/ubuntu.s
     DEBIAN_FRONTEND=noninteractive apt update && \
     DEBIAN_FRONTEND=noninteractive apt install -y curl wget python3 python3-pip python3-qrcode iptables iproute2 net-tools
 
-RUN DEBIAN_FRONTEND=noninteractive apt install -y amneziawg=1.0.20210914-0~202410011337+c0b400c~ubuntu24.04.1
+# RUN DEBIAN_FRONTEND=noninteractive apt install -y amneziawg=1.0.20210914-0~202410011337+c0b400c~ubuntu24.04.1
+RUN DEBIAN_FRONTEND=noninteractive apt install -y amneziawg=1.0.20210914-0~202606190632+61e7417~ubuntu24.04.1
 
 RUN mkdir /root/awg
 
@@ -17,9 +18,10 @@ WORKDIR /root/awg
 COPY awg-quick /usr/bin/
 
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /usr/bin/awg-quick /entrypoint.sh
+COPY fix-empty-ilines.sh /fix-empty-ilines.sh
+RUN chmod +x /usr/bin/awg-quick /entrypoint.sh /fix-empty-ilines.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/entrypoint.sh"]
 
 # for debug purposes only
-# RUN DEBIAN_FRONTEND=noninteractive apt install --yes nano screen sudo mc inetutils-ping traceroute htop net-tools
+# RUN DEBIAN_FRONTEND=noninteractive apt install --yes nano screen sudo mc inetutils-ping traceroute htop

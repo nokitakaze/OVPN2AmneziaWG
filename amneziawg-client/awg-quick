@@ -156,20 +156,11 @@ set_dns() {
 #	{ printf 'nameserver %s\n' "${DNS[@]}"
 #	  [[ ${#DNS_SEARCH[@]} -eq 0 ]] || printf 'search %s\n' "${DNS_SEARCH[*]}"
 #	} | cmd resolvconf -a "$(resolvconf_iface_prefix)$INTERFACE" -m 0 -x
-	cp /etc/resolv.conf /etc/resolv.conf.bak
-	echo '> /etc/resolv.conf'
-	{
-	 printf 'nameserver %s\n' "${DNS[@]}"
-	 [[ ${#DNS_SEARCH[@]} -eq 0 ]] || printf 'search %s\n' "${DNS_SEARCH[*]}"
-	} > /etc/resolv.conf
 	HAVE_SET_DNS=1
 }
 
 unset_dns() {
 	[[ ${#DNS[@]} -gt 0 ]] || return 0
-	if [ -f /etc/resolv.conf.bak ]; then
-	    mv /etc/resolv.conf.bak /etc/resolv.conf
-	fi
 #	cmd resolvconf -d "$(resolvconf_iface_prefix)$INTERFACE" -f
 }
 

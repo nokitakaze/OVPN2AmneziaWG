@@ -16,6 +16,8 @@ if ! lsmod | grep -E '^amneziawg' >/dev/null 2>&1; then
     exit 3
 fi
 
+/fix-empty-ilines.sh
+
 old_ip=$(curl -s 'https://api.ipify.org')
 echo "Current IP: $old_ip"
 

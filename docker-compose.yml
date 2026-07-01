@@ -6,7 +6,7 @@ services:
     cap_add:
       - NET_ADMIN
     volumes:
-      - ./amneziawg-client.conf:/etc/amnezia/amneziawg/wg0.conf
+      - ./amneziawg-client.conf:/etc/amnezia/amneziawg/wg0.conf.template:ro
     healthcheck:
       test: ["CMD", "test", "-f", "/tmp/newip.dat"]
       interval: 10s
